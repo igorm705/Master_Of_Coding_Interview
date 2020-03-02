@@ -1,0 +1,227 @@
+class BinarySearchTree {
+  constructor() {
+    this.root = null;
+    this.pointer = null;
+  }
+  //-------------insert method--------------
+  insert(inserted_value) {
+    if (this.root == null) {
+     const newNode = new Node(inserted_value);
+     this.root = this.pointer = newNode; 
+    // console.log("this.root = " + this.root.value);
+   }
+   else {
+     if (inserted_value > this.pointer.value) {
+       this.insert_right(inserted_value);
+     }
+     else if (inserted_value < this.pointer.value) {
+       this.insert_left(inserted_value);
+     }
+     else {
+       this.counter++;
+     }
+   }
+  }
+  //----------------insert child--------------
+  insert_right(inserted_value) {
+   if(this.pointer.right == null) {
+     const newNode = new Node(inserted_value);
+     this.pointer.right = newNode;
+     this.pointer = this.root;
+   }
+   else {
+     this.pointer = this.pointer.right;
+     this.insert(inserted_value);
+   }
+ }
+  //----------------insert left child-------------
+  insert_left(inserted_value) {
+   if(this.pointer.left == null) {
+     const newNode = new Node(inserted_value);
+     this.pointer.left = newNode;
+     this.pointer = this.root;
+   }
+   else {
+     this.pointer = this.pointer.left;
+     this.insert(inserted_value);
+   }
+  }
+  //---------------lookup method------------
+  lookup(value){
+     if (this.pointer == null) {
+       this.pointer = this.root;
+       return false;
+    }
+    else {
+       if (this.pointer.value == value)  {
+         this.pointer = this.root;
+         return true;
+       }
+       else if(this.pointer.value > value){
+         this.pointer = this.pointer.left;
+         return this.lookup(value);
+       }
+        else if(this.pointer.value < value){
+         this.pointer = this.pointer.right;
+          return this.lookup(value);
+       }
+    }
+    return this.lookup(value);
+  }
+  //---------------remove node method------------
+  remove(value) {
+   
+  console.log("remove function");
+
+   //exception
+  if (this.root == null) {
+    return false;
+  }
+
+  if (this.root.value == value) {
+   this.root = this.append_new_child();
+  } 
+
+  else {
+    return this.remove_with_recursion(value, true,
+                                      this.root);  
+  } 
+ 
+}
+  //---------------remove with recursion---------------
+ remove_with_recursion (value, right, father_pointer) {
+     
+    console.log("remove_with_recursion");
+
+    //exception
+     if (this.pointer == null){
+       return false;
+     }
+
+     if (this.pointer.value < value){
+      var temp = this.pointer; 
+      this.pointer = this.pointer.right;
+      this.remove_with_recursion (value, true, temp);
+    }
+    else if (this.pointer.value > value) {
+      var temp = this.pointer;
+      this.pointer = this.pointer.left;
+      this.remove_with_recursion (value, false, temp);
+    }
+    
+    else if (this.pointer == value) {  
+      if (right){
+        father_pointer.right = this.append_new_child();
+      }
+      else {
+        father_pointer.left = this.append_new_child();
+      }
+      return true;
+    }
+ }
+  //--------------append_new_child child------------
+  append_new_child (value){
+    
+    console.log("append_new_child");
+    //in case there is not such value
+    if (this.pointer == null) {
+      return null;
+    }
+    
+     if (this.pointer.left != null && this.pointer.right == null) {
+       return this.pointer.left;
+     }
+     else if (this.pointer.left == null && this.pointer.right != null){
+        return this.pointer.right;
+     }
+    
+    else if (this.pointer.left != null && this.pointer.right != null){
+      var right_pointer = this.pointer.right;
+      while (right_pointer.left !=null) {
+        if (right_pointer.right == null) {  
+          right_pointer = right_pointer.right;
+          if (right_pointer.left ==null){
+           right_pointer.left = this.pointer.left;
+           return this.pointer.right;
+          }    
+        }
+        else if (right_pointer.right == null){
+          right_pointer = right_pointer.left;   
+        }
+        
+      }
+
+
+    }
+   
+  }
+  //---------------remove node method------------
+  /*remove(value){
+
+   console.log("remove function");
+
+      if (this.pointer != null) {
+        if(this.pointer.value < value && 
+         this.pointer.right != null) {
+       //  var temp_pointer = this.pointer;
+         this.pointer = this.remove(value);
+        // temp_pointer.right = this.remove(value);
+         console.log("temp_pointer.right is " + this.pointer.value);
+        console.log("temp_pointer is " +  temp_pointer.value);
+
+       }
+         else if (this.pointer.value > value  && 
+               this.pointer.left != null){
+         //   var temp_pointer = this.pointer;
+             this.pointer = this.remove(value);
+            //temp_pointer.left = this.remove(value);
+             console.log("temp_pointer.left is " + this.pointer.value);
+            // console.log("temp_pointer is " + //temp_pointer.value);
+         }
+        else if (this.pointer.value == value) {
+           if (this.pointer.left != null && this.pointer.right != null){
+             this.remove_left_child(this.pointer);
+           }
+           else {
+             return this.pointer.right;
+           }
+         }
+         
+     }
+  }
+  //---------------remove-- append left child--------
+  remove_left_child(temp_pointer){
+    if (temp_pointer.left == null) {
+      temp_pointer.left = this.pointer.left;
+    }
+    else {
+      this.remove_left_child(temp_pointer.right);
+    }
+  }
+  */
+}
+//----------------------------------------------------
+var Node = require('./Node.js');  
+var newTree = new BinarySearchTree();
+
+newTree.insert(9);
+newTree.insert(4);
+newTree.insert(6);
+newTree.insert(1);
+newTree.insert(20);
+newTree.insert(15);
+newTree.insert(170);
+
+
+newTree.remove(170);
+JSON.stringify(traverse(newTree.root));
+newTree.lookup(20);
+
+function traverse(node){
+  const tree = {value: node.value};
+  tree.left = node.left === null ? null :
+  traverse(node.left);
+  tree.right = node.right === null ? null :
+  traverse(node.right);
+  return tree;
+}
