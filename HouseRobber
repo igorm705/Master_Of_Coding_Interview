@@ -1,0 +1,116 @@
+      //---------struct Node of Binary tree---------
+    struct TreeNode {
+      int val, sum, index;
+      TreeNode *left;
+      TreeNode *right;
+  };
+  //--------function to create a new node of tree and returns pointer--------
+struct TreeNode* newNode(int val, int index) 
+{ 
+    struct TreeNode* temp = new TreeNode; 
+    temp->val = val;
+    temp->sum = val;
+    temp->index = index;
+    temp->left = temp->right = NULL; 
+    return temp; 
+}; 
+    
+    //---------------create left child----------------
+    struct TreeNode* create_Binary_tree(TreeNode* root, vector<int>& nums, int index){
+    
+     int temp_index  = root->index;
+     if(temp_index >= nums.size()){
+         return root;
+     }   
+     if(temp_index+2 < nums.size()){
+         index +=2;
+       struct TreeNode* tree_node = newNode(nums[root->index+2], (root->index+2));
+       root->left = tree_node;
+       root->left->sum += root->sum;
+       
+       root->left = create_Binary_tree(root->left, nums, index);
+     }  
+     
+      
+        
+    temp_index = root->index+3;
+     if(temp_index < nums.size()){
+       struct TreeNode* tree_node = newNode(nums[(root->index+3)], (root->index+3));     
+       root->right = tree_node;
+       root->right->sum += root->sum;
+
+       root->right= create_Binary_tree(root->right, nums, index+=2);  
+      }
+        
+        return root;
+    }
+ 
+    //---------------function for tree traversal------------
+    int return_sum(TreeNode* root){
+        
+        int left_sum = 0;
+        int right_sum = 0;
+        
+        std::cout<<"root is " <<root->val<< "  " <<std::endl;
+        if (root->left){
+            std::cout<<"root->left is " <<root->left->val<< "  " <<std::endl;
+          left_sum = return_sum(root->left);
+        }
+        if (root->right){
+            std::cout<<"root->right is " <<root->right->val<< "  " <<std::endl;
+          right_sum =  return_sum(root->right);
+        }         
+        
+        if (!root->left && !root->right) {
+          //  std::cout<< "root val is " << root->val <<"  root->sum is " <<root->sum<<std:: endl;
+            return root->sum;    
+        }      
+        
+        
+        if (right_sum>left_sum) {
+            return right_sum;
+        } 
+        else {
+           return  left_sum; 
+        }
+        
+        
+        
+        return  root->sum;    
+    }
+    //----------------------------------------------------------
+    int rob(vector<int>& nums) {
+      
+        //const variable - size of vector
+        const int INPUT_VECTOR_SIZE = nums.size();
+        
+        //exception if the input vector is empty
+        if (INPUT_VECTOR_SIZE == 0){
+            return 0;
+        }
+        
+        //in case if the input vector has only 1 item
+        if (INPUT_VECTOR_SIZE == 1){
+            return nums[0];
+        }
+        
+        //creating 2 roots
+        struct TreeNode* root1 = newNode(nums[0], 0); 
+        struct TreeNode* root2 = newNode(nums[1], 1); 
+         
+        int index = 0;
+        root1 = create_Binary_tree(root1, nums, 0);  
+        root2 = create_Binary_tree(root2, nums, 1);  
+        
+        int result1 = return_sum(root1);
+        int result2 = return_sum(root2);
+        
+       if (result1 > result2) {
+            return result1;
+        } 
+        else {
+           return  result2; 
+        }
+        
+        return result1;
+    }
